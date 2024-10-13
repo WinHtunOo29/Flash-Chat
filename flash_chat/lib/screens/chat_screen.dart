@@ -25,11 +25,15 @@ class _ChatScreenState extends State<ChatScreen> {
       final user = _auth.currentUser;
       if (user != null) {
         this.user = user;
-        print(this.user?.email);
       }
     } catch (e) {
       print(e);
     }
+  }
+
+  void handleSignOut() {
+    _auth.signOut();
+    Navigator.pop(context);
   }
 
   @override
@@ -40,7 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(
               onPressed: () {
-
+                handleSignOut();
               },
               icon: const Icon(Icons.close)
           ),
