@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 
 class MessageStream extends StatelessWidget {
   final _firestore = FirebaseFirestore.instance;
+  final String? senderEmail;
 
-  MessageStream({super.key});
+  MessageStream({super.key, required this.senderEmail});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _firestore.collection('messages').snapshots(), 
+      stream: _firestore.collection('messages').orderBy('timeStamp', descending: true).snapshots(), 
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
@@ -26,14 +27,17 @@ class MessageStream extends StatelessWidget {
               final messageText = message['text'];
               final messageSender = message['sender'];
               if (messageText != null) {
-                final messageBubble = MessageBubble(messageText: messageText, messageSender: messageSender);
-                messageBubbles.add(messageBubble);
+                // if (messageSender == senderEmail) {
+                  final messageBubble = MessageBubble(messageText: messageText, messageSender: messageSender, isCurrentUser: messageSender == senderEmail,);
+                  messageBubbles.add(messageBubble);
+                // }
               }
             }
           }
 
           return Expanded(
             child: ListView(
+              reverse: true,
               padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
               children: messageBubbles,
             ),

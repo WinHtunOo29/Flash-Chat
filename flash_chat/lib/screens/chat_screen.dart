@@ -41,23 +41,9 @@ class _ChatScreenState extends State<ChatScreen> {
     _firestore.collection('messages').add({
       'text': messageText,
       'sender': user?.email,
+      'timeStamp': FieldValue.serverTimestamp()
     });
     messageText = null;
-  }
-
-  void getMessages() async {
-    final messages = await _firestore.collection('messages').get();
-    for (var message in messages.docs) {
-      print(message.data());
-    }
-  }
-
-  void streamMessages() async {
-    await for(var snapshot in _firestore.collection('messages').snapshots()) {
-      for(var message in snapshot.docs) {
-        print(message.data());
-      }
-    }
   }
 
   void handleSignOut() {
@@ -88,7 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            MessageStream(),
+            MessageStream(senderEmail: user!.email),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
